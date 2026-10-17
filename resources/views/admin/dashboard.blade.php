@@ -89,7 +89,7 @@
                     <tr>
                         <td class="ps-3">{{ $i + 1 }}</td>
                         <td>
-                            <a href="#" class="text-primary fw-semibold">
+                            <a href="{{ route('admin.laporan.show', $laporan->id) }}" class="text-primary fw-semibold">
                                 {{ $laporan->kode_laporan }}
                             </a>
                         </td>

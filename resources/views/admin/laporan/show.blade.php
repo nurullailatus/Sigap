@@ -152,6 +152,40 @@
         </div>
         @endif
 
+        {{-- Form Tugaskan Teknisi --}}
+        @if($laporan->status === 'diproses' && $laporan->penugasan->count() === 0)
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-header bg-white border-0 pt-3">
+                <h6 class="fw-bold mb-0">Tugaskan Teknisi</h6>
+            </div>
+            <div class="card-body">
+                <form action="{{ route('admin.laporan.tugaskan', $laporan->id) }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Pilih Teknisi</label>
+                        <select name="teknisi_id" class="form-select form-select-sm">
+                            <option value="">-- Pilih Teknisi --</option>
+                            @foreach($teknisiList as $teknisi)
+                            <option value="{{ $teknisi->id }}">{{ $teknisi->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Prioritas</label>
+                        <select name="prioritas" class="form-select form-select-sm">
+                            <option value="rendah">Rendah</option>
+                            <option value="sedang" selected>Sedang</option>
+                            <option value="tinggi">Tinggi</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 btn-sm">
+                        <i class="bi bi-person-check me-1"></i> Tugaskan
+                    </button>
+                </form>
+            </div>
+        </div>
+        @endif
+
         {{-- Info Penugasan (kalau sudah ada) --}}
         @if($laporan->penugasan->count() > 0)
         <div class="card border-0 shadow-sm rounded-3">

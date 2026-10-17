@@ -202,6 +202,64 @@
             padding: 24px;
             min-height: calc(100vh - var(--topbar-height));
         }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            border: 0;
+            background: transparent;
+            color: #1a2744;
+            font-size: 1.35rem;
+            line-height: 1;
+        }
+
+        @media (max-width: 767.98px) {
+            #sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+                box-shadow: 8px 0 24px rgba(0, 0, 0, 0.18);
+            }
+
+            body.sidebar-open {
+                overflow: hidden;
+            }
+
+            body.sidebar-open #sidebar {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 999;
+                background: rgba(15, 23, 42, 0.45);
+            }
+
+            body.sidebar-open .sidebar-overlay {
+                display: block;
+            }
+
+            #topbar {
+                left: 0;
+                padding: 0 16px;
+            }
+
+            .sidebar-toggle {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 10px;
+                padding: 4px;
+            }
+
+            #main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -211,7 +269,7 @@
 
     {{-- Logo + Nama Sistem --}}
     <div class="sidebar-brand">
-        <img src="{{ asset('logo_unuja.png') }}" alt="Logo UNUJA">
+        <img src="{{ asset('image/logo_unuja.png') }}" alt="Logo UNUJA">
         <span>SIGAP</span>
     </div>
 
@@ -219,7 +277,7 @@
     <div class="sidebar-user">
         <img src="{{ auth()->user()->foto_profil
             ? asset('storage/' . auth()->user()->foto_profil)
-            : asset('images/default-avatar.png') }}"
+            : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->nama) . '&background=1a2744&color=fff' }}"
             alt="Foto Profil">
         <div class="user-info">
             <strong title="{{ auth()->user()->nama }}">{{ auth()->user()->nama }}</strong>
@@ -243,39 +301,48 @@
                class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-grid-1x2-fill"></i> Dashboard
             </a>
-            <a href="#" class="nav-link {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
+
+            <a href="{{ route('admin.laporan.index') }}" class="nav-link {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
                 <i class="bi bi-file-earmark-text-fill"></i> Laporan Masuk
             </a>
-            <a href="#" class="nav-link {{ request()->routeIs('admin.penugasan*') ? 'active' : '' }}">
+        
+            <a href="{{ route('admin.penugasan.index') }}" class="nav-link {{ request()->routeIs('admin.penugasan*') ? 'active' : '' }}">
                 <i class="bi bi-person-check-fill"></i> Penugasan Teknisi
             </a>
 
-            <div class="nav-section-title">Data Master</div>
-            <a href="#" class="nav-link {{ request()->routeIs('admin.perangkat*') ? 'active' : '' }}">
-                <i class="bi bi-cpu-fill"></i> Data Perangkat
+           <a href="{{ route('admin.ruangan.index') }}"
+            class="nav-link {{ request()->routeIs('admin.ruangan.*') ? 'active' : '' }}">
+                <i class="bi bi-door-open"></i>
+                <span>Data Ruangan</span>
             </a>
-            <a href="#" class="nav-link {{ request()->routeIs('admin.ruangan*') ? 'active' : '' }}">
-                <i class="bi bi-building-fill"></i> Data Ruangan & Gedung
+
+            <a href="{{ route('admin.perangkat.index') }}"
+            class="nav-link {{ request()->routeIs('admin.perangkat.*') ? 'active' : '' }}">
+                <i class="bi bi-cpu"></i>
+                <span>Data Perangkat</span>
             </a>
-            <a href="#" class="nav-link {{ request()->routeIs('admin.pengguna*') ? 'active' : '' }}">
+
+            
+
+            <a href="{{ route('admin.pengguna.index') }}" 
+                class="nav-link {{ request()->routeIs('admin.pengguna*') ? 'active' : '' }}">
                 <i class="bi bi-people-fill"></i> Data Pengguna
             </a>
-            <a href="#" class="nav-link {{ request()->routeIs('admin.statistik*') ? 'active' : '' }}">
+
+            <a href="{{ route('admin.statistik.index') }}"
+               class="nav-link {{ request()->routeIs('admin.statistik*') ? 'active' : '' }}">
                 <i class="bi bi-bar-chart-fill"></i> Statistik & Laporan
             </a>
 
         @elseif(auth()->user()->role === 'teknisi')
             {{-- MENU TEKNISI --}}
-            <div class="nav-section-title">Menu Utama</div>
             <a href="{{ route('teknisi.dashboard') }}"
-               class="nav-link {{ request()->routeIs('teknisi.dashboard') ? 'active' : '' }}">
-                <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                class="nav-link {{ request()->routeIs('teknisi.dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-grid-1x2-fill"></i> Dashboard
             </a>
-            <a href="#" class="nav-link">
-                <i class="bi bi-tools"></i> Tugas Saya
-            </a>
-            <a href="#" class="nav-link">
-                <i class="bi bi-clock-history"></i> Riwayat Perbaikan
+                <a href="{{ route('teknisi.tugas.index') }}"
+                class="nav-link {{ request()->routeIs('teknisi.tugas*') ? 'active' : '' }}">
+                    <i class="bi bi-tools"></i> Tugas Saya
             </a>
 
         @else
@@ -285,11 +352,17 @@
                class="nav-link {{ request()->routeIs('pelapor.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-grid-1x2-fill"></i> Dashboard
             </a>
-            <a href="#" class="nav-link">
+            <a href="{{ route('pelapor.laporan.create') }}" 
+                class="nav-link {{ request()->routeIs('pelapor.laporan.create') ? 'active' : '' }}">
                 <i class="bi bi-plus-circle-fill"></i> Buat Laporan
             </a>
-            <a href="#" class="nav-link">
+            <a href="{{ route('pelapor.laporan.index') }}" 
+                class="nav-link {{ request()->routeIs('pelapor.laporan*') ? 'active' : '' }}">
                 <i class="bi bi-clock-history"></i> Riwayat Laporan
+            </a>
+            <a href="{{ route('pelapor.profil') }}"
+                class="nav-link {{ request()->routeIs('pelapor.profil') ? 'active' : '' }}">
+                <i class="bi bi-person-circle"></i> Profil Saya
             </a>
         @endif
     </nav>
@@ -305,9 +378,17 @@
     </div>
 </div>
 
+<div class="sidebar-overlay" data-sidebar-close></div>
+
 {{-- ===== TOPBAR ===== --}}
 <div id="topbar">
-    <h5 class="page-title">@yield('page-title', 'Dashboard')</h5>
+    <div class="d-flex align-items-center">
+        <button type="button" class="sidebar-toggle" data-sidebar-toggle
+                aria-label="Buka menu navigasi" aria-expanded="false">
+            <i class="bi bi-list"></i>
+        </button>
+        <h5 class="page-title">@yield('page-title', 'Dashboard')</h5>
+    </div>
     <div class="d-flex align-items-center gap-3">
         {{-- Ikon notifikasi --}}
         <a href="#" class="text-secondary position-relative">
@@ -325,7 +406,7 @@
         {{-- Foto profil di topbar --}}
         <img src="{{ auth()->user()->foto_profil
             ? asset('storage/' . auth()->user()->foto_profil)
-            : asset('images/default-avatar.png') }}"
+            : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->nama) . '&background=1a2744&color=fff' }}"
             alt="Profil"
             style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #e0e0e0">
     </div>
@@ -338,6 +419,27 @@
 
 {{-- Bootstrap JS --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (() => {
+        const toggle = document.querySelector('[data-sidebar-toggle]');
+        const closeElements = document.querySelectorAll('[data-sidebar-close], #sidebar .nav-link');
+
+        if (!toggle) return;
+
+        const setSidebarState = (isOpen) => {
+            document.body.classList.toggle('sidebar-open', isOpen);
+            toggle.setAttribute('aria-expanded', String(isOpen));
+        };
+
+        toggle.addEventListener('click', () => {
+            setSidebarState(!document.body.classList.contains('sidebar-open'));
+        });
+
+        closeElements.forEach((element) => {
+            element.addEventListener('click', () => setSidebarState(false));
+        });
+    })();
+</script>
 @stack('scripts')
 
 </body>

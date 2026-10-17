@@ -4,9 +4,52 @@
 
 @section('content')
 
-{{-- Filter Status --}}
+{{-- Filter laporan --}}
 <div class="card border-0 shadow-sm rounded-3 mb-4">
-    <div class="card-body py-2">
+    <div class="card-body">
+        <form method="GET" action="{{ route('admin.laporan.index') }}">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Status</label>
+                    <select name="status" class="form-select form-select-sm">
+                        <option value="">Semua status</option>
+                        @foreach(['menunggu' => 'Menunggu', 'diproses' => 'Diproses', 'selesai' => 'Selesai', 'ditolak' => 'Ditolak'] as $value => $label)
+                            <option value="{{ $value }}" @selected(($filters['status'] ?? '') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Mulai</label>
+                    <input type="date" name="tanggal_mulai" class="form-control form-control-sm" value="{{ $filters['tanggal_mulai'] ?? '' }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Selesai</label>
+                    <input type="date" name="tanggal_selesai" class="form-control form-control-sm" value="{{ $filters['tanggal_selesai'] ?? '' }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Kategori</label>
+                    <select name="kategori_id" class="form-select form-select-sm">
+                        <option value="">Semua kategori</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" @selected((string) ($filters['kategori_id'] ?? '') === (string) $category->id)>{{ $category->nama_kategori }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Ruangan</label>
+                    <select name="ruangan_id" class="form-select form-select-sm">
+                        <option value="">Semua ruangan</option>
+                        @foreach($rooms as $room)
+                            <option value="{{ $room->id }}" @selected((string) ($filters['ruangan_id'] ?? '') === (string) $room->id)>{{ $room->nama_ruangan }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-sm flex-grow-1"><i class="bi bi-funnel"></i> Filter</button>
+                    <a href="{{ route('admin.laporan.index') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-counterclockwise"></i></a>
+                </div>
+            </div>
+        </form>
         <div class="d-flex gap-2 flex-wrap">
             <a href="{{ route('admin.laporan.index') }}"
                class="btn btn-sm {{ !request('status') ? 'btn-primary' : 'btn-outline-secondary' }}">

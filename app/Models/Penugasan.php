@@ -17,4 +17,9 @@ class Penugasan extends Model
     {
         return $this->belongsTo(Pengguna::class, 'teknisi_id');
     }
+
+    public function laporan()
+    {
+        return $this->belongsTo(Laporan::class, 'laporan_id');
+    }
 }
