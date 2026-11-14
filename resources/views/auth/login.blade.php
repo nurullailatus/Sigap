@@ -167,7 +167,7 @@
             margin-bottom: 1.25rem;
         }
 
-        .sigap-input-group .bi {
+        .sigap-input-group > .bi {
             position: absolute;
             left: 1rem;
             top: 50%;
@@ -201,13 +201,23 @@
             right: 0.95rem;
             top: 50%;
             transform: translateY(-50%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
             background: none;
             border: none;
             color: #94a3b8;
             cursor: pointer;
-            padding: 0.25rem;
+            padding: 0;
             line-height: 1;
-            z-index: 1;
+            z-index: 2;
+        }
+
+        .sigap-toggle-password .bi {
+            font-size: 1rem;
+            pointer-events: none;
         }
 
         .sigap-toggle-password:hover,
@@ -392,6 +402,7 @@
                     <button type="button"
                             class="sigap-toggle-password"
                             id="togglePassword"
+                            aria-controls="password"
                             aria-label="Tampilkan kata sandi"
                             aria-pressed="false"
                             title="Tampilkan kata sandi">
